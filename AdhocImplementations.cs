@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web;
 
 namespace Prelude.AdhocImplementations
 {
@@ -241,6 +242,28 @@ namespace Prelude.AdhocImplementations
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return GetEnumerator ();
+        }
+    }
+
+    public class AdHocHttpHandler : IHttpHandler
+    {
+        Action<HttpContext> processRequest;
+        Func<bool> isResusable;
+
+        public GenericHttpHandler(Action<HttpContext> processRequest, Func<bool> isResusable)
+        {
+            this.processRequest = processRequest;
+            this.isResusable = isResusable;
+        }
+
+        public bool IsReusable
+        {
+            get { return isResusable (); }
+        }
+
+        public void ProcessRequest(HttpContext context)
+        {
+            processRequest (context);
         }
     }
 }
